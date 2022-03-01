@@ -1,11 +1,38 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow, Menu, nativeImage, Tray, ipcMain } = require('electron')
 const path = require('path')
 const electronReload = require('electron-reload')(__dirname)
 
+let tray = null
+function createTray () {
+  const icon = path.join(__dirname, '/app.png') // required.
+  const trayicon = nativeImage.createFromPath(icon)
+  tray = new Tray(trayicon.resize({ width: 16 }))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: () => {
+        createWindow()
+      }
+    },
+    {
+      label: 'Quit',
+      click: () => {
+        app.quit() // actually quit the app.
+      }
+    },
+  ])
+
+  tray.setContextMenu(contextMenu)
+}
+
 function createWindow () {
+  if (!tray) { // if tray hasn't been created already.
+    createTray()
+  }
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -20,6 +47,10 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+  
+  mainWindow.on('closed', function () {
+    mainWindow = null
+  })
 }
 
 // This method will be called when Electron has finished
@@ -39,7 +70,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform == 'darwin') app.dock.hide()
 })
 
 // In this file you can include the rest of your app's specific main process
