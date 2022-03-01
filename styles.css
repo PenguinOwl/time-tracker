@@ -29,6 +29,17 @@
   transform: translateY(-50%);
 }
 
+.group {
+  /*
+  width: 600px;
+  height: 150px;
+  padding: 4px;
+  background: #ddd;
+  */
+  display: flex;
+  flex-direction: column;
+}
+
 .clock {
   height: 70px;
   width: 70px;

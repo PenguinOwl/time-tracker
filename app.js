@@ -6,8 +6,7 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 var display = "";
 var worker = new Worker('./worker.js');
 worker.on("message", (event) => {
-  console.log("cc");
-  display = event.data;
+  display = event;
 })
 worker.onerror = function (event) {
   console.log(event.message, event);
