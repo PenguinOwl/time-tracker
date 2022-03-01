@@ -4,11 +4,11 @@ var display = "";
 
 const { WorkerData, parentPort } = require('worker_threads')
 
-on('message', (e) => {
-  console.log("bb");
-  updateResult();
-  postMessage(display);
-})
+function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}
 
 function updateResult() {
   //Calling functions of native addon 
@@ -39,6 +39,7 @@ function updateResult() {
       }
       var time = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
       var opacity = Math.pow(0.95, Math.log(1+max-value)+1);
+      var title = toTitleCase(key.replace('-', ' '));
       console.log(Math.log(1+max-value)+1);
       string += `
       <div class="box-container">
@@ -57,4 +58,7 @@ function updateResult() {
     }
     display = string;
   });
+  parentPort.postMessage({ data: display });
 }
+
+setInterval(updateResult, 100);
