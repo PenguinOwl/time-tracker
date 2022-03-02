@@ -1,12 +1,12 @@
 {
-  "name": "electron-quick-start",
+  "name": "time-tracker",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Tracks Time",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/PenguinOwl/time-tracker",
   "keywords": [
     "Electron",
     "quick",
@@ -15,13 +15,15 @@
     "demo"
   ],
   "author": "GitHub",
-  "license": "CC0-1.0",
+  "license": "MIT",
   "devDependencies": {
     "electron": "^17.0.0"
   },
   "dependencies": {
     "electron-active-window": "^0.0.6",
     "electron-reload": "^2.0.0-alpha.1",
-    "gsap": "^3.9.1"
+    "electron-store": "^8.0.1",
+    "gsap": "^3.9.1",
+    "remixicon": "^2.5.0"
   }
 }

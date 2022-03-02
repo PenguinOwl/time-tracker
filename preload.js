@@ -14,5 +14,9 @@ window.addEventListener('DOMContentLoaded', () => {
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  getWindowData: () => ipcRenderer.invoke('window-data')
+  getWindowData: () => ipcRenderer.invoke('window-data'),
+  setStoreValue: (key, value) => ipcRenderer.invoke('setStoreValue', key, value),
+  getStoreValue: (key, other) => ipcRenderer.invoke('getStoreValue', key, other),
+  resetTime: (key) => ipcRenderer.invoke('resetTime', key),
+  removeKey: (key) => ipcRenderer.invoke('deleteKey', key)
 })

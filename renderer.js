@@ -13,11 +13,16 @@ function toTitleCase(str) {
     });
 }
 
-var boxElements = {};
 var group = document.querySelector(".group");
 var nodes = [];
 var ease  = Power1.easeInOut;
 var boxes = [];
+var showHidden = false;
+var hidden = [];
+
+async function onload() {
+  hidden = await window.electronAPI.getStoreValue("hidden", []);
+}
 
 async function updateDOM() {
   var workerData = await window.electronAPI.getWindowData();
@@ -42,14 +47,20 @@ async function updateDOM() {
       newBox.id = "tracker-" + key;
       document.getElementById("debug").appendChild(newBox);
       newBox.innerHTML = `
-      <div class="box" style="background-color:rgba(92, 92, 92, 1); order: ">
-          <div class="vertical-center clock">
-            <div class="clock-text vertical-center">
-              <b class="clock-text-content"></b>
-            </div>
+      <div class="box">
+        <div class="clock">
+          <div class="clock-text">
+            <b class="clock-text-content"></b>
           </div>
-          <div class="vertical-center window-name">
-          </div>
+        </div>
+        <div class="window-name">
+        </div>
+        <div class="tile-menu" style="color: white;">
+          <i class="ri-close-line" onclick="trackerClose('${key}')"></i>
+          <i class="ri-refresh-line" onclick="trackerRefresh('${key}')"></i>
+          <i class="ri-eye-line" onclick="trackerHide('${key}')"></i>
+          <i style="display: none" class="ri-eye-off-line" onclick="trackerUnhide('${key}')"></i>
+        </div>
       </div>
       `
       element = newBox;
@@ -65,19 +76,44 @@ async function updateDOM() {
     boxElement              = element.querySelector(".box");
     clockTextContentElement = element.querySelector(".clock-text-content");
     windowNameElement       = element.querySelector(".window-name");
+    hideElement             = element.querySelector(".ri-eye-line");
+    unhideElement           = element.querySelector(".ri-eye-off-line");
 
     if (boxElement.classList.contains('glow') != (key == windowClass)) {
       boxElement.classList.toggle('glow');
     }
 
-    var time    = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
-    var opacity = Math.pow(0.95, Math.log(1+max-value)+1);
-    var title   = toTitleCase(key.replaceAll('-', ' '));
+    var isHidden = hidden.includes(key);
+    var time     = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
+    var opacity  = Math.pow(0.95, Math.log(1+max-value)+1);
+    var title    = toTitleCase(key.replaceAll('-', ' '));
+    var color    = isHidden ? "180,40,40" : "70,70,70";
+
+    hideDisplayMode   = isHidden ? "none" : "block";
+    unhideDisplayMode = isHidden ? "block" : "none";
+
+    if (hideElement.style.display != hideDisplayMode) {
+      hideElement.style.display = hideDisplayMode;
+    }
+
+    if (unhideElement.style.display != unhideDisplayMode) {
+      unhideElement.style.display = unhideDisplayMode;
+    }
 
     if (element.style.order != index + 1)
       reorder = true;
-    element.style.order                   = index + 1;
-    boxElement.style.backgroundColor.opacity = opacity;
+
+    element.style.order = index + 1;
+
+    isVisible = !hidden.includes(key) || showHidden;
+
+    displayMode = isVisible ? "block" : "none";
+
+    if (element.style.display != displayMode) {
+      element.style.display = displayMode;
+    }
+
+    boxElement.style.backgroundColor = `rgba(${color},${opacity})`;
 
     if (clockTextContentElement.innerText != time)
       clockTextContentElement.innerText = time;
@@ -85,7 +121,10 @@ async function updateDOM() {
     if (windowNameElement.innerText != title)
       windowNameElement.innerText = title;
 
+
+
   })
+
   if (reorder)
     layout();
 }
@@ -117,8 +156,34 @@ function layout() {
     var x = transform.x + lastX - box.x;
     var y = transform.y + lastY - box.y;
 
-    console.log(transform);
     // Tween to 0 to remove the transforms
     TweenLite.fromTo(box.node, 0.5, { x, y }, { x: 0, y: 0, ease });
   }
+}
+
+async function trackerHide(key) {
+  if (!hidden.includes(key))
+    hidden.push(key);
+  await window.electronAPI.setStoreValue("hidden", hidden);
+}
+
+async function trackerUnhide(key) {
+  hidden = hidden.filter(item => item !== key);
+  await window.electronAPI.setStoreValue("hidden", hidden);
+}
+
+async function trackerRefresh(key) {
+  await window.electronAPI.resetTime(key);
+}
+
+async function trackerClose(key) {
+  document.getElementById("tracker-" + key).remove();
+  nodes = nodes.filter(item => item.id !== "tracker-" + key);
+  await window.electronAPI.removeKey(key);
+}
+
+function toggleHidden() {
+  showHidden = !showHidden;
+  var color = showHidden ? "rgb(255,80,80)" : "white";
+  document.getElementById("show-hidden-button").style.color = color;
 }
