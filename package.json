@@ -2,8 +2,10 @@
   "name": "time-tracker",
   "version": "1.0.0",
   "description": "Tracks Time",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "start": "electron ."
   },
   "repository": "https://github.com/PenguinOwl/time-tracker",
@@ -17,7 +19,8 @@
   "author": "GitHub",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^17.0.0"
+    "electron": "^17.0.0",
+    "electron-builder": "^22.14.13"
   },
   "dependencies": {
     "electron-active-window": "^0.0.6",
@@ -25,5 +28,27 @@
     "electron-store": "^8.0.1",
     "gsap": "^3.9.1",
     "remixicon": "^2.5.0"
+  },
+  "build": {
+    "appId": "penowl.time-tracker",
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
+      "worker.js"
+    ],
+    "nodeGypRebuild": false
   }
 }
