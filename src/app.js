@@ -1,6 +1,7 @@
 const Store = require('electron-store');
 
 const store = new Store();
+const path = require('path');
 
 const {
   Worker, isMainThread, parentPort, workerData
@@ -8,7 +9,7 @@ const {
 const {app, BrowserWindow, ipcMain} = require('electron')
 
 var display = "";
-var worker = new Worker('./src/worker.js');
+var worker = new Worker(path.join(require('electron').app.getAppPath(), '../../src/worker.js'));
 worker.on("message", (event) => {
   display = event;
 })
