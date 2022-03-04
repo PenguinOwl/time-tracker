@@ -1,15 +1,4 @@
-const Store = require('electron-store');
-
-const store = new Store();
-
-var windowTime = {};
-var lastTime = Date.now();
-var lastSave = Date.now();
-var display = "";
-
-const { WorkerData, parentPort } = require('worker_threads')
-
-windowTime = store.get("data", {});
+const { workerData, parentPort } = require('worker_threads')
 
 parentPort.on("message", event => {
   var type = event.type;
@@ -22,6 +11,8 @@ parentPort.on("message", event => {
   }
 });
 
+var windowTime = workerData;
+var lastTime = Date.now();
 
 function updateResult() {
   //Calling functions of native addon 
@@ -39,9 +30,6 @@ function updateResult() {
       parentPort.postMessage({ data: windowTime, current: windowClass });
     }
     lastTime = currtime;
-    if (currtime - lastSave > 15) {
-      store.set("data", windowTime);
-    }
   });
 }
 

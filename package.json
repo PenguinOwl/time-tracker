@@ -48,8 +48,11 @@
       "!**/{appveyor.yml,.travis.yml,circle.yml}",
       "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ],
-    "extraFiles": [
-      "src/worker.js"
+    "extraResources": [
+      {
+        "from": "src/worker.js",
+        "to": "app.asar.unpacked/src/worker.js"
+      }
     ],
     "nodeGypRebuild": false
   }

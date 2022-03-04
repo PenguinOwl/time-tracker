@@ -86,7 +86,7 @@ async function updateDOM() {
     var isHidden = hidden.includes(key);
     var time     = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
     var opacity  = Math.pow(0.95, Math.log(1+max-value)+1);
-    var title    = toTitleCase(key.replaceAll('-', ' '));
+    var title    = toTitleCase(key.replaceAll('-', ' ').replaceAll('_', ' ').replaceAll('.exe', '').replaceAll('.app', ''));
     var color    = isHidden ? "180,40,40" : "70,70,70";
 
     hideDisplayMode   = isHidden ? "none" : "block";

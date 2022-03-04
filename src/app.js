@@ -8,10 +8,16 @@ const {
 } = require('worker_threads');
 const {app, BrowserWindow, ipcMain} = require('electron')
 
-var display = "";
-var worker = new Worker(path.join(require('electron').app.getAppPath(), '../../src/worker.js'));
+var data = store.get("data", {});
+
+var lastSave = Date.now();
+var worker = new Worker(path.join(require('electron').app.getAppPath().replace("app.asar", "app.asar.unpacked"), '/src/worker.js'), {workerData: data});
 worker.on("message", (event) => {
-  display = event;
+  data = event;
+  if (Date.now() - lastSave > 1500) {
+    store.set("data", data.data);
+    lastSave = Date.now();
+  }
 })
 worker.onerror = function (event) {
   console.log(event.message, event);
@@ -19,7 +25,7 @@ worker.onerror = function (event) {
 ipcMain.handle('window-data', sendData);
 
 function sendData() {
-  return display;
+  return data;
 }
 
 ipcMain.handle('getStoreValue', (event, key, other) => {
