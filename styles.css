@@ -59,9 +59,11 @@
 
 .show-hidden-button {
   font-size: 30px;
-  margin: 10px;
-  margin-top: auto;
-  margin-left: auto;
+  margin: 20px;
+  margin-right: 40px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
 
 .window-name {
