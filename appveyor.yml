@@ -13,6 +13,7 @@ init:
 install:
   - ps: Install-Product node 16 x64
   - yarn
+  - yarn install
 
 build_script:
   - yarn dist --publish always
