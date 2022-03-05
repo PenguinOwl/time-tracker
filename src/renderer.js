@@ -1,3 +1,13 @@
+//const tt = require('electron-tooltip')
+//tt({
+//  position: 'top',
+//  width: 200,
+//  style: {
+//    backgroundColor: '#f2f3f4',
+//    borderRadius: '4px'
+//  }
+//})
+
 function objToString (obj) {
     let str = "";
     for (const [p, val] of Object.entries(obj)) {
@@ -78,16 +88,21 @@ async function updateDOM() {
     windowNameElement       = element.querySelector(".window-name");
     hideElement             = element.querySelector(".ri-eye-line");
     unhideElement           = element.querySelector(".ri-eye-off-line");
+    clockElement            = element.querySelector(".clock");
 
     if (boxElement.classList.contains('glow') != (key == windowClass)) {
       boxElement.classList.toggle('glow');
     }
 
-    var isHidden = hidden.includes(key);
-    var time     = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
-    var opacity  = Math.pow(0.95, Math.log(1+max-value)+1);
-    var title    = toTitleCase(key.replaceAll('-', ' ').replaceAll('_', ' ').replaceAll('.exe', '').replaceAll('.app', ''));
-    var color    = isHidden ? "180,40,40" : "70,70,70";
+    var isHidden  = hidden.includes(key);
+    var time      = new Date(value).toISOString().substr(11, 8).replace(/^0(0:)?0?/, "");
+    var opacity   = Math.pow(0.95, Math.log(1+max-value));
+    var title     = toTitleCase(key.replaceAll('-', ' ').replaceAll('_', ' ').replaceAll('.exe', '').replaceAll('.app', ''));
+    var color     = isHidden ? "180,40,40" : "70,70,70";
+    var border    = (key == windowClass) ? "#ffff00" : "#b6b6b6";
+    var clockFill = (key == windowClass) ? "#222" : "#555";
+
+    console.log(clockElement);
 
     hideDisplayMode   = isHidden ? "none" : "block";
     unhideDisplayMode = isHidden ? "block" : "none";
@@ -98,6 +113,14 @@ async function updateDOM() {
 
     if (unhideElement.style.display != unhideDisplayMode) {
       unhideElement.style.display = unhideDisplayMode;
+    }
+
+    if (clockElement.style.borderColor != border) {
+      clockElement.style.borderColor = border;
+    }
+
+    if (clockElement.style.backgroundColor != clockFill) {
+      clockElement.style.backgroundColor = clockFill;
     }
 
     if (element.style.order != index + 1)
@@ -120,8 +143,6 @@ async function updateDOM() {
 
     if (windowNameElement.innerText != title)
       windowNameElement.innerText = title;
-
-
 
   })
 

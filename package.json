@@ -1,6 +1,6 @@
 {
   "name": "time-tracker",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Tracks Time",
   "main": "src/main.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "electron-active-window": "^0.0.6",
     "electron-reload": "^2.0.0-alpha.1",
     "electron-store": "^8.0.1",
+    "electron-tooltip": "^1.1.5",
     "gsap": "^3.9.1",
     "remixicon": "^2.5.0"
   },
