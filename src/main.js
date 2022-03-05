@@ -1,7 +1,10 @@
 // Modules to control application life and create native browser window
+const Store = require('electron-store');
+const store = new Store();
 const { app, BrowserWindow, Menu, nativeImage, Tray, ipcMain } = require('electron')
 const path = require('path')
 const electronReload = require('electron-reload')(__dirname)
+const AutoLaunch = require('auto-launch');
 
 let tray = null
 function createTray () {
@@ -36,6 +39,8 @@ function createTray () {
 
 const gotTheLock = app.requestSingleInstanceLock()
 
+var autoLaunch;
+
 if (!gotTheLock) {
   app.quit()
 } else {
@@ -55,6 +60,11 @@ if (!gotTheLock) {
   // Some APIs can only be used after this event occurs.
   app.whenReady().then(() => {
     createWindow()
+
+    autoLaunch = new AutoLaunch({
+      name: 'TimeTracker',
+      path: app.getPath('exe'),
+    });
 
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the
@@ -99,6 +109,20 @@ function createWindow () {
 app.on('window-all-closed', function () {
   if (process.platform == 'darwin') app.dock.hide()
 })
+
+ipcMain.handle('updateAutoStart', () => {
+  enabled = store.get("autoStart", false);
+  autoLaunch.isEnabled().then(function(autoLaunchEnabled){
+    if (enabled == autoLaunchEnabled) {
+      return;
+    }
+    if (!autoLaunchEnabled){
+      autoLaunch.disable();
+    } else {
+      autoLaunch.enable();
+    }
+  });
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

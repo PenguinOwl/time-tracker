@@ -52,6 +52,20 @@ body {
   flex-direction: column;
 }
 
+.tooltip {
+  background-color: transparent;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tooltip[data-show] {
+  opacity: 1;
+}
+
 .clock {
   min-height: 70px;
   min-width: 70px;
@@ -67,6 +81,16 @@ body {
 }
 
 .show-hidden-button {
+  font-size: 30px;
+  margin: 20px;
+  margin-right: 90px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  color: white;
+}
+
+.auto-start-button {
   font-size: 30px;
   margin: 20px;
   margin-right: 40px;

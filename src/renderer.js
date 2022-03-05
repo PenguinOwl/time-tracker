@@ -1,13 +1,3 @@
-//const tt = require('electron-tooltip')
-//tt({
-//  position: 'top',
-//  width: 200,
-//  style: {
-//    backgroundColor: '#f2f3f4',
-//    borderRadius: '4px'
-//  }
-//})
-
 function objToString (obj) {
     let str = "";
     for (const [p, val] of Object.entries(obj)) {
@@ -29,9 +19,51 @@ var ease  = Power1.easeInOut;
 var boxes = [];
 var showHidden = false;
 var hidden = [];
+var autoStart = false;
+var showHiddenButton = document.getElementById("show-hidden-button");
+var autoStartButton = document.getElementById("auto-start-button");
+var tooltips = {};
+
+const showEvents = ['mouseenter', 'focus'];
+const hideEvents = ['mouseleave', 'blur'];
+
+function showTooltip(event) {
+  event.target.tooltip.setAttribute('data-show', '');
+
+  // We need to tell Popper to update the tooltip position
+  // after we show the tooltip, otherwise it will be incorrect
+  event.target.tooltip.popperInstance.update();
+}
+
+function hideTooltip(event) {
+  event.target.tooltip.removeAttribute('data-show');
+}
+
+function createTooltip(parentobj, element, text, options) {
+  var tooltip = document.createElement("div");
+  tooltip.classList.add("tooltip");
+  tooltip.innerText = text;
+  popperInstance = Popper.createPopper(element, tooltip, options);
+  showEvents.forEach((event) => {
+    event.popperInstance = popperInstance;
+    element.addEventListener(event, showTooltip);
+  });
+  hideEvents.forEach((event) => {
+    element.addEventListener(event, hideTooltip);
+  });
+  element.tooltip = tooltip;
+  tooltip.popperInstance = popperInstance;
+  parentobj.appendChild(tooltip);
+  return tooltip;
+}
 
 async function onload() {
   hidden = await window.electronAPI.getStoreValue("hidden", []);
+  autoStart = await window.electronAPI.getStoreValue("autoStart", false);
+  createTooltip(document.body, showHiddenButton, "Toggle Hidden", { placement: "top" });
+  createTooltip(document.body, autoStartButton, "Toggle Launch on Startup ", { placement: "top" });
+  var color = autoStart ? "rgb(220,255,220)" : "rgba(255, 220, 220, 0.5)";
+  autoStartButton.style.color = color;
 }
 
 async function updateDOM() {
@@ -56,6 +88,7 @@ async function updateDOM() {
       newBox.classList.add("box-container");
       newBox.id = "tracker-" + key;
       document.getElementById("debug").appendChild(newBox);
+      tooltips[key] = [];
       newBox.innerHTML = `
       <div class="box">
         <div class="clock">
@@ -66,14 +99,19 @@ async function updateDOM() {
         <div class="window-name">
         </div>
         <div class="tile-menu" style="color: white;">
-          <i class="ri-close-line" onclick="trackerClose('${key}')"></i>
-          <i class="ri-refresh-line" onclick="trackerRefresh('${key}')"></i>
-          <i class="ri-eye-line" onclick="trackerHide('${key}')"></i>
-          <i style="display: none" class="ri-eye-off-line" onclick="trackerUnhide('${key}')"></i>
+          <i tooltext="Remove" class="ri-close-line" onclick="trackerClose('${key}')"></i>
+          <i tooltext="Reset" class="ri-refresh-line" onclick="trackerRefresh('${key}')"></i>
+          <i tooltext="Hide" class="ri-eye-line" onclick="trackerHide('${key}')"></i>
+          <i tooltext="Unhide" style="display: none" class="ri-eye-off-line" onclick="trackerUnhide('${key}')"></i>
         </div>
       </div>
       `
       element = newBox;
+      tilemenu = element.querySelector(".tile-menu");
+      children = tilemenu.children;
+      for (var child of children) {
+        tooltips[key].push(createTooltip(document.body, child, child.getAttribute("tooltext"), { placement: "left" }));
+      }
       nodes.push(newBox);
       TweenLite.set(newBox, { x:0, y: 0 });
       boxes.push({
@@ -101,8 +139,6 @@ async function updateDOM() {
     var color     = isHidden ? "180,40,40" : "70,70,70";
     var border    = (key == windowClass) ? "#ffff00" : "#b6b6b6";
     var clockFill = (key == windowClass) ? "#222" : "#555";
-
-    console.log(clockElement);
 
     hideDisplayMode   = isHidden ? "none" : "block";
     unhideDisplayMode = isHidden ? "block" : "none";
@@ -171,6 +207,7 @@ function layout() {
     var transform_string = gsap.getProperty(box.node, "transform");
     const translateRegex = /translate\((?<x>\d+)px, (?<y>\d+)px\)/;
     var match = transform_string.match(translateRegex);
+    //var transform = match.groups;
     var transform = match.groups;
 
     // Reversed delta values taking into account current transforms
@@ -198,6 +235,10 @@ async function trackerRefresh(key) {
 }
 
 async function trackerClose(key) {
+  todelete = tooltips[key];
+  for (var ttip of todelete) {
+    ttip.remove();
+  }
   document.getElementById("tracker-" + key).remove();
   nodes = nodes.filter(item => item.id !== "tracker-" + key);
   await window.electronAPI.removeKey(key);
@@ -206,5 +247,13 @@ async function trackerClose(key) {
 function toggleHidden() {
   showHidden = !showHidden;
   var color = showHidden ? "rgb(255,80,80)" : "white";
-  document.getElementById("show-hidden-button").style.color = color;
+  showHiddenButton.style.color = color;
+}
+
+async function toggleAutoStart() {
+  autoStart = !autoStart;
+  var color = autoStart ? "rgb(220,255,220)" : "rgba(255, 220, 220, 0.5)";
+  autoStartButton.style.color = color;
+  await window.electronAPI.setStoreValue("autoStart", autoStart);
+  await window.electronAPI.updateAutoStart();
 }

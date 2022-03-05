@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net/ 'unsafe-inline' https://cdnjs.cloudflare.com/">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net/ 'unsafe-inline' https://cdnjs.cloudflare.com/ https://unpkg.com/">
     <link href="./mini.css" rel="stylesheet">
     <link href="./styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -13,7 +13,11 @@
     <div id="debug" unselectable="on" class="group"></div>
     <!-- You can also require other files to run in this process -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
     <script src="./src/renderer.js" defer></script>
+    <div id="auto-start-button" class="auto-start-button" onclick="toggleAutoStart()">
+      <i class="ri-login-circle-fill"></i>
+    </div>
     <div id="show-hidden-button" class="show-hidden-button" onclick="toggleHidden()">
     <i class="ri-eye-fill"></i>
     </div>

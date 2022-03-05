@@ -21,6 +21,8 @@ function updateResult() {
   activeWindows().getActiveWindow().then((data)=>{
     var currtime = Date.now();
     var windowClass = data.windowClass;
+    if (!windowClass.match(/\w/))
+      return;
     if (Number(data.idleTime) < 60) {
       if (windowTime.hasOwnProperty(windowClass)) {
         windowTime[windowClass] += currtime - lastTime;

@@ -17,6 +17,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getWindowData: () => ipcRenderer.invoke('window-data'),
   setStoreValue: (key, value) => ipcRenderer.invoke('setStoreValue', key, value),
   getStoreValue: (key, other) => ipcRenderer.invoke('getStoreValue', key, other),
+  updateAutoStart: () => ipcRenderer.invoke('updateAutoStart'),
   resetTime: (key) => ipcRenderer.invoke('resetTime', key),
   removeKey: (key) => ipcRenderer.invoke('deleteKey', key)
 })

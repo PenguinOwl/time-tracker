@@ -42,6 +42,4 @@ ipcMain.handle('resetTime', (event, key) => {
 
 ipcMain.handle('deleteKey', (event, key) => {
   return worker.postMessage({type: "delete", key: key})
-  console.log(key);
 });
-
