@@ -62,8 +62,7 @@ if (!gotTheLock) {
     createWindow()
 
     autoLaunch = new AutoLaunch({
-      name: 'TimeTracker',
-      path: app.getPath('exe'),
+      name: 'TimeTracker'
     });
 
     app.on('activate', function () {
@@ -116,7 +115,7 @@ ipcMain.handle('updateAutoStart', () => {
     if (enabled == autoLaunchEnabled) {
       return;
     }
-    if (!autoLaunchEnabled){
+    if (autoLaunchEnabled){
       autoLaunch.disable();
     } else {
       autoLaunch.enable();
