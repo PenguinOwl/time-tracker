@@ -19,7 +19,7 @@
   "author": "GitHub",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^22.0.0",
+    "electron": "^22.0.2",
     "electron-builder": "^22.14.13"
   },
   "dependencies": {
