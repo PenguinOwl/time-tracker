@@ -807,9 +807,9 @@ electron-store@^8.0.1:
     conf "^10.0.3"
     type-fest "^1.0.2"
 
-electron@^22.0.0:
-  version "22.0.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-22.0.0.tgz#ef84ab9cf23aa3f8c2f42a1e8e000ad7fd941058"
+electron@^23.0.0:
+  version "23.0.0"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-23.0.0.tgz#4da457d7585149bb1a98ea8bddb286e72322a309"
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^16.11.26"
